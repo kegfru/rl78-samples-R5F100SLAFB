@@ -3,10 +3,7 @@ PROJECT_MOT=$(PROJECT_ELF:.elf=.mot)
 PROJECT_MAP=$(PROJECT_ELF:.elf=.map)
 PROJECT_LST=$(PROJECT_ELF:.elf=.lst)
 
-# Find latest installed GNURL78 toolchain. If your toolchain is already in PATH, just comment next line.
-TOOL_PATH:=$(shell find /usr/share -maxdepth 1 -type d -iname "gnurl78*" | sort | tail -n 1)/bin
-
-PREFIX:=$(TOOL_PATH)/rl78-elf
+PREFIX:=rl78-elf
 
 LD = $(PREFIX)-gcc
 CC = $(PREFIX)-gcc
@@ -43,12 +40,6 @@ $(PROJECT_LST): $(PROJECT_ELF)
 
 $(PROJECT_ELF): $(OBJS)
 	$(LD) $(LDFLAGS) -o $@ $^
-
-flash: $(PROJECT_MOT)
-	rl78flash -vvwri -m2 -b500000 /dev/ttyUSB0 $^
-
-erase:
-	rl78flash -vveri -m2 -b500000 /dev/ttyUSB0
 
 clean:
 	-rm -f $(OBJS) $(PROJECT_ELF) $(PROJECT_MOT) $(PROJECT_MAP) $(PROJECT_LST)
