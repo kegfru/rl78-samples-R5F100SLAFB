@@ -1,4 +1,4 @@
-#include "uart0.h"
+#include "uart2.h"
 #include <iodefine.h>
 #include <iodefine_ext.h>
 #include <stddef.h>
@@ -14,10 +14,10 @@
 
 
 
-void uart0_init (void)
+void uart2_init (void)
 {
-    /* Configure UART0 */
-    SAU0EN = 1;                                             /* Supply clock to serial array unit 0 */
+    /* Configure UART2 */
+    SAU1EN = 1;                                             /* Supply clock to serial array unit 0 */
     {
         /* >=4 cycle delay required by manual */
         asm("nop");
@@ -26,15 +26,14 @@ void uart0_init (void)
         asm("nop");
         asm("nop");
     }
-    SPS0.sps0 = (PRS_VALUE << 4) | PRS_VALUE;               /* Set input clock (CK00 and CK01) to fclk = 16MHz */
-    /* Setup operation mode for UART0 transmitter */
-    NFEN0.nfen0 |= 1;                                       /* Enable noise filter on RxD0 pin */
-    SMR00.smr00 = 0x0023U;                                  /* CKS=0   Operation clock : CK00,
+    SPS1.sps1 = (PRS_VALUE << 4) | PRS_VALUE;               /* Set input clock (CK00 and CK01) to fclk = 16MHz */
+    /* Setup operation mode for UART2 transmitter */
+    SMR10.smr10 = 0x0023U;                                  /* CKS=0   Operation clock : CK00,
                                                                CSS=0   Transfer clock : division of CK00
                                                                MD21=01 Operation mode : UART
                                                                MD0=1   Buffer empty interrupt
                                                             */
-    SCR00.scr00 = 0x8097U;                                  /* TXE=1 RXE=0 Transmission only
+    SCR10.scr10 = 0x8097U;                                  /* TXE=1 RXE=0 Transmission only
                                                                EOC=0       Reception error interrupt masked
                                                                DAP=0 CKP=0 Phase clock : type 1
                                                                PTC=0       No parity
@@ -42,16 +41,16 @@ void uart0_init (void)
                                                                SLC=1       1 stop bit
                                                                DLS=3       8-bit data length
                                                             */
-    SDR00.sdr00 = SDR_VALUE << 9;                           /* transfer clock : 16 MHz / (7 + 1) / 2 = 1 Mbps */
-    /* Setup operation mode for UART0 receiver */
-    SMR01.smr01 = 0x0122U;                                  /* CKS=0   Operation clock : CK00,
+    SDR10.sdr10 = SDR_VALUE << 9;                           /* transfer clock : 16 MHz / (7 + 1) / 2 = 1 Mbps */
+    /* Setup operation mode for UART2 receiver */
+    SMR11.smr11 = 0x0122U;                                  /* CKS=0   Operation clock : CK00,
                                                                CCS=0   Transfer clock : division of CK00
                                                                STS=1   Detect falling edge as start bit
                                                                SIS=0   Normal reception
                                                                MD21=01 Operation mode : UART
                                                                MD0=0   Transfer end interrupt
                                                             */
-    SCR01.scr01 = 0x4497U;                                  /* TXE=0 RXE=1 Reception only
+    SCR11.scr11 = 0x4497U;                                  /* TXE=0 RXE=1 Reception only
                                                                EOC=1       Reception error interrupt enabled
                                                                DAP=0 CKP=0 Phase clock : type 1
                                                                PTC=0       No parity
@@ -59,104 +58,94 @@ void uart0_init (void)
                                                                SLC=1       1 stop bit
                                                                DLS=3       8-bit data length
                                                             */
-    SDR01.sdr01 = SDR_VALUE << 9;                           /* transfer clock : 16 MHz / (7 + 1) / 2 = 1 Mbps */
+    SDR11.sdr11 = SDR_VALUE << 9;                                /* transfer clock : 16 MHz / (7 + 1) / 2 = 1 Mbps */
 
-    SOL0.sol0 &= ~0x01U;                                    /* Output is not inverted */
-    SO0.so0   |=  0x01U;                                    /* Initial output level is 1 */
-    SOE0.soe0 |=  0x01U;                                    /* Enable data output */
+    SOL1.sol1 &= ~0x01U;                                    /* Output is not inverted */
+    SO1.so1   |=  0x01U;                                    /* Initial output level is 1 */
+    SOE1.soe1 |=  0x01U;                                    /* Enable data output */
 
-    /* Configure P12 as open-drain output */
-    POM1.pom1 |=  (1U << 2);
-    P1.p1   |=  (1U << 2);
-    PM1.pm1  &= ~(1U << 2);
+    /* Configure P13 as open-drain output */
+    POM1.pom1 |=  (1U << 3);
+    P1.p1     |=  (1U << 3);
+    PM1.pm1   &= ~(1U << 3);
 
-    /* Configure P11 as digital input with built-in pull-up */
-    PM1.pm1  |=  (1U << 1);
-    POM1.pom1 &= ~(1U << 1);
-    PIM1.pim1 &= ~(1U << 1);
-    PU1.pu1  |=  (1U << 1);
+    /* Configure P14 as digital input with built-in pull-up */
+    PM1.pm1   |=  (1U << 4);
+    POM1.pom1 &= ~(1U << 4);
+    PIM1.pim1 &= ~(1U << 4);
+    PU1.pu1   |=  (1U << 4);
 
-    /* Enable UART0 operation */
-	SS0.ss0 |= (1U << 0) | (1U << 1);
+    /* Enable UART2 operation */
+	SS1.ss1 |= 0x01U | 0x02U;
 
-    /* Mask all UART0 interrupts */
-    STMK0  = 1;
-    SRMK0  = 1;
-    SREMK0 = 1;
+    /* Mask all UART2 interrupts */
+    STMK2  = 1;
+    SRMK2  = 1;
+    SREMK2 = 1;
 
     /* Setup interrupt flags with initial values */
-    STIF0  = 1;
-    SRIF0  = 0;
-    SREIF0 = 0;
+    STIF2  = 1;
+    SRIF2  = 0;
+    SREIF2 = 0;
 }
 
-int uart0_putchar (int c)
+int uart2_putchar (int c)
 {
-    while (0 == STIF0);
-    STIF0 = 0;
-    SDR00.sdr00 = (unsigned char)c;
+    while (0 == STIF2);
+    STIF2 = 0;
+    SDR10.sdr10 = (unsigned char)c;
     return (unsigned char)c;
 }
 
-int uart0_puts (const char * s)
+int uart2_puts (const char * s)
 {
     while ('\0' != *s)
     {
-        (void)uart0_putchar(*s++);
+        (void)uart2_putchar(*s++);
     }
-    (void)uart0_putchar('\n');
+    (void)uart2_putchar('\n');
     return 1;
 }
 
-void uart0_flush (void)
+void uart2_flush (void)
 {
     /* Discard any data in the input buffer */
-    SRIF0 = 0;
+    SRIF2 = 0;
 }
 
-int uart0_getchar (void)
+int uart2_getchar (void)
 {
-    while (0 == SRIF0 && 0 == SREIF0);
-    SRIF0 = 0;
-    SREIF0 = 0;
+    while (0 == SRIF2 && 0 == SREIF2);
+    SRIF2 = 0;
+    SREIF2 = 0;
 
     int c = EOF;
-    unsigned int status = SSR01.ssr01;
+    unsigned int status = SSR11.ssr11;
     if (status & (1U << 5))                                  /* BFF01 == 1: If valid data present */
     {
-        c = (unsigned char)SDR01.sdr01;
+        c = (unsigned char)SDR11.sdr11;
     }
     if (status & 0x07)
     {
-        SIR01.sir01 = status; // Serial Flag Clear Trigger Register mn (SIRmn)
-		// FEF (framing) - 2, PEF (Parity/ACK) - 1, OVF (overrun) - 0.
+        SIR11.sir11 = status;
         if (status & (1U << 2))                              /* FEF01 == 1: Framing error occurred */
         {
-			c = 0x66U; // f
-            ST0.st0 = (1U << 1);                             /* Disable UART0 receiver operation (channel 1) */
-            while (SE0.se0 & (1U << 1));
-            SS0.ss0 = (1U << 1);                             /* Enable UART0 receiver operation (channel 1) */
-        }
-        if (status & (1U << 1))                              /* PEF01 == 1: Parity/ACK error occurred */
-        {
-			c = 0x70U; //p
-        }
-        if (status & (1U << 0))                              /* OVF01 == 1: overrun error occurred */
-        {
-			c = 0x6fU;  //o
+            ST1.st1 = (1U << 1);                             /* Disable UART2 receiver operation (channel 1) */
+            while (SE1.se1 & (1U << 1));
+            SS1.ss1 = (1U << 1);                             /* Enable UART2 receiver operation (channel 1) */
         }
     }
-    return c; //only for debug !!
+    return c;
 }
 
-char* uart0_gets (char * s, int size)
+char* uart2_gets (char * s, int size)
 {
     char *p = s;
     int len = 0;
 
     while (len < size)
     {
-        int c = uart0_getchar();
+        int c = uart2_getchar();
         if (EOF == c)
         {
             *p = '\0';
@@ -170,20 +159,4 @@ char* uart0_gets (char * s, int size)
     }
     *p = '\0';
     return s;
-}
-
-__attribute__((interrupt))
-void st0_handler(void)
-{
-}
-
-__attribute__((interrupt))
-void sr0_handler(void)
-{
-}
-
-/* This is actually INTSRE0 interrupt handler */
-__attribute__((interrupt))
-void tm01h_handler(void)
-{
 }

@@ -3,10 +3,7 @@ PROJECT_MOT=$(PROJECT_ELF:.elf=.mot)
 PROJECT_MAP=$(PROJECT_ELF:.elf=.map)
 PROJECT_LST=$(PROJECT_ELF:.elf=.lst)
 
-# Find latest installed GNURL78 toolchain. If your toolchain is already in PATH, just comment next line.
-TOOL_PATH:=$(shell find /usr/share -maxdepth 1 -type d -iname "gnurl78*" | sort | tail -n 1)/bin
-
-PREFIX:=$(TOOL_PATH)/rl78-elf
+PREFIX:=rl78-elf
 
 LD = $(PREFIX)-gcc
 CC = $(PREFIX)-gcc
@@ -24,8 +21,12 @@ CFLAGS = -Wall -Wextra -Os -ggdb -ffunction-sections -fdata-sections -I$(PROJECT
 LDFLAGS = -Wl,--gc-sections -Wl,-Map=$(PROJECT_MAP) -T $(PROJECT_LNK) -nostartfiles
 
 SOURCES = \
+	$(PROJECT_PATH)/init.c \
 	$(PROJECT_PATH)/main.c \
 	$(PROJECT_PATH)/uart0.c \
+	$(PROJECT_PATH)/uart1.c \
+	$(PROJECT_PATH)/uart2.c \
+	$(PROJECT_PATH)/uart3.c \
 	$(END)
 
 OBJS	= $(SOURCES:.c=.o) $(COMMON_PATH)/crt0.o
@@ -45,15 +46,6 @@ $(PROJECT_LST): $(PROJECT_ELF)
 
 $(PROJECT_ELF): $(OBJS)
 	$(LD) $(LDFLAGS) -o $@ $^
-
-flash: $(PROJECT_MOT)
-	rl78flash -m2 -b500000 -vvwri /dev/ttyUSB0 $^
-
-erase:
-	rl78flash -m2 -b500000 -vveri /dev/ttyUSB0
-
-terminal:
-	rl78flash -rt9600 /dev/ttyUSB0
 
 clean:
 	-rm -f $(OBJS) $(PROJECT_ELF) $(PROJECT_MOT) $(PROJECT_MAP) $(PROJECT_LST)
