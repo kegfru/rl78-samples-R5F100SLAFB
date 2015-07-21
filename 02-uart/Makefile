@@ -15,7 +15,7 @@ SIZE = $(PREFIX)-size
 COMMON_PATH = ../common
 PROJECT_PATH = .
 
-PROJECT_LNK = $(COMMON_PATH)/rl78-R5F100SL.ld
+PROJECT_LNK = $(COMMON_PATH)/rl78-R5F100xL.ld
 
 CFLAGS = -Wall -Wextra -Os -ggdb -ffunction-sections -fdata-sections -I$(PROJECT_PATH) -I$(COMMON_PATH) -mmul=g13
 LDFLAGS = -Wl,--gc-sections -Wl,-Map=$(PROJECT_MAP) -T $(PROJECT_LNK) -nostartfiles
