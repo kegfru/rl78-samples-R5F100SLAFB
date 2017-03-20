@@ -1,0 +1,8 @@
+LCD_RS		P05 	cn1 pin 55
+LCD_EN		P06		cn1 pin 54
+LCD_D4		P70		cn1 pin 53
+LCD_D5		P71		cn1 pin 52
+LCD_D6		P72		cn1 pin 51
+LCD_D7		P73		cn1 pin 50
+
+Russian text must saved in UTF-8
