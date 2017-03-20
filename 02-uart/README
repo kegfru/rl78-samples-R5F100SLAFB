@@ -1,0 +1,4 @@
+uart0 - p12-txd0, p11-rxd0 (cn2 17&16 pins)
+uart1 - p02-txd1, p03-rxd1 (cn2 59&58 pins)
+uart2 - p13-txd2, p14-rxd2 (cn2 15&14 pins)
+uart3 - p144-txd3, p143-rxd3 (cn2 63&64 pins)
