@@ -1,4 +1,4 @@
-LCD_RS		P05 	cn1 pin 55
+LCD_RS		P05		cn1 pin 55
 LCD_EN		P06		cn1 pin 54
 LCD_D4		P70		cn1 pin 53
 LCD_D5		P71		cn1 pin 52
