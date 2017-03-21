@@ -18,6 +18,7 @@ common/   - common files for all applications
 01-it/    - Interval timer example (clock configuration and interrupt usage)
 02-uart/  - UART0, UART1, UART2, UART3 example (transmit string every second)
 03-lcd/   - LCD based on Hitachi HD44780 LCD controller example with russian letters support
+04-rtc/   - Real Time Clock example
 
 Samples for RL78/G14 can be found here:
 https://github.com/msalov/rl78-samples-R5F104FEAFP
